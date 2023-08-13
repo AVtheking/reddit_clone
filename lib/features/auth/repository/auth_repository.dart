@@ -66,7 +66,6 @@ class AuthRepository {
     } on FirebaseException catch (e) {
       throw e.message!;
     } catch (e) {
-      print(e);
       return left(Failure(e.toString()));
     }
   }
@@ -79,8 +78,8 @@ class AuthRepository {
     return _users.doc(uid).snapshots().map(
       (event) {
         final data = event.data();
-        print('Received Firestore Data: $data');
-        return UserModel.fromMap(data as Map<String, dynamic> ?? {});
+
+        return UserModel.fromMap(data as Map<String, dynamic>);
       },
     );
   }
