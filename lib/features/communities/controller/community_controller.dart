@@ -6,25 +6,45 @@ import 'package:reddit_clone/features/communities/repository/community_repo.dart
 import 'package:reddit_clone/models/community.dart';
 import 'package:routemaster/routemaster.dart';
 
-class CommunityController {
+final userCommunityProvider = StreamProvider((ref) {
+  final communityController = ref.watch(communityControllerProvider.notifier);
+  return communityController.getUserCommunity();
+});
+final getCommunityByNameProvider = StreamProvider.family((ref, String name) {
+  return ref
+      .watch(communityControllerProvider.notifier)
+      .getCommunityByName(name);
+});
+
+final communityControllerProvider =
+    StateNotifierProvider<CommunityController, bool>(
+  (ref) => CommunityController(
+      communityRepository: ref.watch(communityRepositoryProvider), ref: ref),
+);
+
+class CommunityController extends StateNotifier<bool> {
   final CommunityRepository _communityRepositry;
   final Ref _ref;
   CommunityController(
       {required CommunityRepository communityRepository, required Ref ref})
       : _communityRepositry = communityRepository,
-        _ref = ref;
+        _ref = ref,
+        super(false);
 
   void createCommunity(String name, BuildContext context) async {
-    final uid = _ref.read(userProvider);
+    state = true;
+    final uid = _ref.read(userProvider)!.uuid;
+    // print(uid);
     Community community = Community(
       id: name,
       name: name,
       banner: Constants.bannerDefault,
       avatar: Constants.avatarDefault,
-      members: [uid.toString()],
-      modes: [uid.toString()],
+      members: [uid],
+      modes: [uid],
     );
     final res = await _communityRepositry.createCommunity(community);
+    state = false;
     res.fold(
         (l) => ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -38,5 +58,15 @@ class CommunityController {
       );
       Routemaster.of(context).pop();
     });
+  }
+
+  Stream<List<Community>> getUserCommunity() {
+    final uid = _ref.read(userProvider)!.uuid;
+
+    return _communityRepositry.getUserCommunity(uid);
+  }
+
+  Stream<Community> getCommunityByName(String name) {
+    return _communityRepositry.getCommunityByName(name);
   }
 }

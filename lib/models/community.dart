@@ -6,8 +6,8 @@ class Community {
   final String name;
   final String banner;
   final String avatar;
-  final List<String> members;
-  final List<String> modes;
+  final List<dynamic> members;
+  final List<dynamic> modes;
   Community({
     required this.id,
     required this.name,
@@ -22,8 +22,8 @@ class Community {
     String? name,
     String? banner,
     String? avatar,
-    List<String>? members,
-    List<String>? modes,
+    List<dynamic>? members,
+    List<dynamic>? modes,
   }) {
     return Community(
       id: id ?? this.id,
@@ -52,16 +52,16 @@ class Community {
         name: map['name'] as String,
         banner: map['banner'] as String,
         avatar: map['avatar'] as String,
-        members: List<String>.from((map['members'] as List<String>)),
-        modes: List<String>.from(
-          (map['modes'] as List<String>),
+        members: List<dynamic>.from((map['members'] as List<dynamic>)),
+        modes: List<dynamic>.from(
+          (map['modes'] as List<dynamic>),
         ));
   }
 
-  @override
-  String toString() {
-    return 'Community(id: $id, name: $name, banner: $banner, avatar: $avatar, members: $members, modes: $modes)';
-  }
+  // @override
+  // String toString() {
+  //   return 'Community(id: $id, name: $name, banner: $banner, avatar: $avatar, members: $members, modes: $modes)';
+  // }
 
   @override
   bool operator ==(covariant Community other) {
