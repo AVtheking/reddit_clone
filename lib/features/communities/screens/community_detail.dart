@@ -73,7 +73,12 @@ class CommunityDetailScreen extends ConsumerWidget {
                                         child: const Text("Mod Tools"),
                                       )
                                     : OutlinedButton(
-                                        onPressed: navigateToModScreen,
+                                        onPressed: () {
+                                          ref
+                                              .watch(communityControllerProvider
+                                                  .notifier)
+                                              .joinCommunity(data, context);
+                                        },
                                         style: ElevatedButton.styleFrom(
                                             shape: RoundedRectangleBorder(
                                               borderRadius:

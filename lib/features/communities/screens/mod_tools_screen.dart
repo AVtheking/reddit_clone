@@ -11,6 +11,10 @@ class ModToolsScreen extends StatelessWidget {
       Routemaster.of(context).push("/edit-community/$name");
     }
 
+    void navigateToModeratorScreen() {
+      Routemaster.of(context).push("/add-moderater/$name");
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Mod Tools"),
@@ -21,7 +25,7 @@ class ModToolsScreen extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.add_moderator),
             title: const Text("Add Moderators"),
-            onTap: () {},
+            onTap: navigateToModeratorScreen,
           ),
           ListTile(
             leading: const Icon(Icons.edit),

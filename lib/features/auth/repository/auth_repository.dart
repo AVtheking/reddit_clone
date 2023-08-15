@@ -83,4 +83,9 @@ class AuthRepository {
       },
     );
   }
+
+  void logout() async {
+    _googleSignIn.signOut();
+    _auth.signOut();
+  }
 }
