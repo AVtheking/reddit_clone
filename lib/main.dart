@@ -41,7 +41,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return ref.watch(authStateChangeProvider).when(
           data: (data) => MaterialApp.router(
             title: 'Flutter Demo',
-            theme: Palette.darkModeAppTheme,
+            theme: ref.watch(themeProvider),
             routerDelegate: RoutemasterDelegate(routesBuilder: (context) {
               if (data != null) {
                 getData(ref, data);

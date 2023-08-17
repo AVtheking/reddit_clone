@@ -162,6 +162,18 @@ class CommunityController extends StateNotifier<bool> {
     });
   }
 
+  void addModerater(
+      String communityName, List<String> uids, BuildContext context) async {
+    final res = await _communityRepositry.addModerater(communityName, uids);
+    res.fold(
+        (l) => ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l.message),
+              ),
+            ),
+        (r) => Routemaster.of(context).pop());
+  }
+
   Stream<List<Community>> searchCommunity(String query) {
     return _communityRepositry.searchCommunity(query);
   }

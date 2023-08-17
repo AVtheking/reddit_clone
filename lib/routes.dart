@@ -8,6 +8,9 @@ import 'package:reddit_clone/features/communities/screens/community_screen.dart'
 import 'package:reddit_clone/features/communities/screens/edit_screen.dart';
 import 'package:reddit_clone/features/communities/screens/mod_tools_screen.dart';
 import 'package:reddit_clone/features/home/home_screen.dart';
+import 'package:reddit_clone/features/post/screens/add_post_type.dart';
+import 'package:reddit_clone/features/user_Profile/screens/edit_screen.dart';
+import 'package:reddit_clone/features/user_Profile/screens/user_profile.dart';
 import 'package:routemaster/routemaster.dart';
 
 final loggedOutRoute = RouteMap(
@@ -36,6 +39,17 @@ final loggedInRoute = RouteMap(
         ),
     '/add-moderater/:name': (route) => MaterialPage(
           child: AddModeraterScreen(name: route.pathParameters['name']!),
+        ),
+    '/user-profile/:uid': (route) => MaterialPage(
+          child: UserProfileScreen(
+            uid: route.pathParameters['uid']!,
+          ),
+        ),
+    '/edit-profile/:uid': (route) => MaterialPage(
+          child: EditProfileScreen(uid: route.pathParameters['uid']!),
+        ),
+    '/add-post/:type': (route) => MaterialPage(
+          child: AddPostTypeScreen(type: route.pathParameters['type']!),
         ),
   },
 );

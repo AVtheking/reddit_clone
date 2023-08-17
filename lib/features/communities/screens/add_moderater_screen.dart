@@ -14,13 +14,41 @@ class AddModeraterScreen extends ConsumerStatefulWidget {
 }
 
 class _AddModeraterScreenState extends ConsumerState<AddModeraterScreen> {
+  Set<String> uids = {};
+  var cnt = 0;
+  // void addExistingMembers() {
+  //   final user = ref.read(userProvider)!;
+  //   final community = ref.read(getCommunityByNameProvider(widget.name));
+
+  // }
+
+  void addUid(String uid) {
+    setState(() {
+      uids.add(uid);
+    });
+  }
+
+  void removeUid(String uid) {
+    setState(() {
+      uids.remove(uid);
+    });
+  }
+
+  void addModerater(BuildContext context) {
+    ref
+        .read(communityControllerProvider.notifier)
+        .addModerater(widget.name, uids.toList(), context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                addModerater(context);
+              },
               icon: const Icon(Icons.done),
             ),
           ],
@@ -31,11 +59,23 @@ class _AddModeraterScreenState extends ConsumerState<AddModeraterScreen> {
                   itemBuilder: (ctx, index) {
                     final member = community.members[index];
                     return ref.watch(userDataProvider(member)).when(
-                          data: (user) => CheckboxListTile(
-                            value: true,
-                            onChanged: (val) {},
-                            title: Text(user.name),
-                          ),
+                          data: (user) {
+                            if (community.modes.contains(member) && cnt == 0) {
+                              uids.add(member);
+                            }
+                            cnt++;
+                            return CheckboxListTile(
+                              value: uids.contains(member),
+                              onChanged: (val) {
+                                if (val!) {
+                                  addUid(member);
+                                } else {
+                                  removeUid(member);
+                                }
+                              },
+                              title: Text(user.name),
+                            );
+                          },
                           error: (error, stackTrace) => ErrorText(
                             text: error.toString(),
                           ),
