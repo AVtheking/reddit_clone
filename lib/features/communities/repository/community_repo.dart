@@ -14,13 +14,14 @@ class CommunityRepository {
   final FirebaseFirestore _firestore;
   CommunityRepository({required FirebaseFirestore firestore})
       : _firestore = firestore;
-
+//This is the repository class to create store and update community
   FutureVoid createCommunity(Community community) async {
     try {
+      //first check if already a community exist with specific name
       var communitiesDoc = await _communities.doc(community.name).get();
       if (communitiesDoc.exists) {
         throw "Community with same name already exists";
-      }
+      } // if not then store it in firebase
       return right(
         _communities.doc(community.name).set(
               community.toMap(),
@@ -36,7 +37,7 @@ class CommunityRepository {
 // this is a function which checks if there is a community in which our user is in it
 //returns thie list of community
   Stream<List<Community>> getUserCommunity(String uid) {
-    return _communities
+    return _communities //we store user id in the community not user name because userid is unique
         .where('members', arrayContains: uid)
         .snapshots()
         .map((event) {
@@ -48,6 +49,7 @@ class CommunityRepository {
     });
   }
 
+//Function to get community by searching its name
   Stream<Community> getCommunityByName(String name) {
     return _communities.doc(name).snapshots().map(
           (event) => Community.fromMap(event.data() as Map<String, dynamic>),
@@ -63,6 +65,9 @@ class CommunityRepository {
   //     return left(Failure(e.toString()));
   //   }
   // }
+
+  //function to edit community banner or avatar
+  //in this we take editted community from the controller and update the previous one
   FutureVoid editCommunity(Community community) async {
     try {
       return right(
@@ -126,6 +131,7 @@ class CommunityRepository {
     }
   }
 
+//Function to add moderater in the community just simple
   FutureVoid addModerater(String communityName, List<String> uids) async {
     try {
       return right(_communities.doc(communityName).update({'modes': uids}));

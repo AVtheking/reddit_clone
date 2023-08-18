@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:reddit_clone/core/constants/constants.dart';
@@ -56,8 +55,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: Constants.tabsWidget[_page],
       drawer: const ComunityList(),
       endDrawer: const ProfileDrawer(),
-      bottomNavigationBar: CupertinoTabBar(
-        activeColor: Colors.white,
+      bottomNavigationBar: BottomNavigationBar(
+        selectedItemColor: Colors.white,
         backgroundColor: ref.watch(themeProvider).backgroundColor,
         items: const [
           BottomNavigationBarItem(

@@ -8,14 +8,14 @@ class Post {
   final String? description;
   final String communityName;
   final String communityProfilePic;
-  final List<String> upvotes;
-  final List<String> downvotes;
+  final List<dynamic> upvotes;
+  final List<dynamic> downvotes;
   final int commentCount;
   final String username;
   final String uid;
   final String type;
   final DateTime createdAt;
-  final List<String> awards;
+  final List<dynamic> awards;
   Post({
     required this.id,
     required this.title,
@@ -40,14 +40,14 @@ class Post {
     String? description,
     String? communityName,
     String? communityProfilePic,
-    List<String>? upvotes,
-    List<String>? downvotes,
+    List<dynamic>? upvotes,
+    List<dynamic>? downvotes,
     int? commentCount,
     String? username,
     String? uid,
     String? type,
     DateTime? createdAt,
-    List<String>? awards,
+    List<dynamic>? awards,
   }) {
     return Post(
       id: id ?? this.id,
@@ -95,15 +95,15 @@ class Post {
             map['description'] != null ? map['description'] as String : null,
         communityName: map['communityName'] as String,
         communityProfilePic: map['communityProfilePic'] as String,
-        upvotes: List<String>.from((map['upvotes'] as List<String>)),
-        downvotes: List<String>.from((map['downvotes'] as List<String>)),
+        upvotes: List<dynamic>.from((map['upvotes'] as List<dynamic>)),
+        downvotes: List<dynamic>.from((map['downvotes'] as List<dynamic>)),
         commentCount: map['commentCount'] as int,
         username: map['username'] as String,
         uid: map['uid'] as String,
         type: map['type'] as String,
         createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt'] as int),
-        awards: List<String>.from(
-          (map['awards'] as List<String>),
+        awards: List<dynamic>.from(
+          (map['awards'] as List<dynamic>),
         ));
   }
 
