@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:reddit_clone/core/enum/enum.dart';
 import 'package:reddit_clone/core/providers/storage_repository_provider.dart';
 import 'package:reddit_clone/features/auth/controller/auth_controller.dart';
 import 'package:reddit_clone/features/post/repository/post_repository.dart';
+import 'package:reddit_clone/features/user_Profile/controller/user_controller.dart';
+import 'package:reddit_clone/models/comments.dart';
 import 'package:reddit_clone/models/community.dart';
 import 'package:reddit_clone/models/post.dart';
 import 'package:routemaster/routemaster.dart';
@@ -21,6 +24,11 @@ final postProvider = StreamProvider.family(
     return ref.watch(postControllerProvider.notifier).fetchPost(communities);
   },
 );
+final getPostByIdProvider = StreamProvider.family((ref, String postId) =>
+    ref.watch(postControllerProvider.notifier).getPostById(postId));
+
+final commentsProvider = StreamProvider.family((ref, String postId) =>
+    ref.watch(postControllerProvider.notifier).fetchComments(postId));
 
 class PostController extends StateNotifier<bool> {
   final PostRepository _postRepository;
@@ -59,6 +67,9 @@ class PostController extends StateNotifier<bool> {
         awards: [],
         description: description);
     final res = await _postRepository.addPost(post);
+    _ref
+        .read(userControllerProvider.notifier)
+        .updateUserKarma(UserKarma.textPost);
     res.fold(
         (l) => ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -96,6 +107,9 @@ class PostController extends StateNotifier<bool> {
         awards: [],
         link: link);
     final res = await _postRepository.addPost(post);
+    _ref
+        .read(userControllerProvider.notifier)
+        .updateUserKarma(UserKarma.linkPost);
     res.fold(
         (l) => ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -142,6 +156,9 @@ class PostController extends StateNotifier<bool> {
           awards: [],
           link: r);
       final res = await _postRepository.addPost(post);
+      _ref
+          .read(userControllerProvider.notifier)
+          .updateUserKarma(UserKarma.imagePost);
       res.fold(
           (l) => ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -161,5 +178,76 @@ class PostController extends StateNotifier<bool> {
       return _postRepository.fetchUserPost(communities);
     }
     return Stream.value([]);
+  }
+
+  void deletePost(Post post, BuildContext context) async {
+    final res = await _postRepository.deletePost(post);
+    _ref
+        .read(userControllerProvider.notifier)
+        .updateUserKarma(UserKarma.deletePost);
+    res.fold(
+      (l) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l.toString(),
+          ),
+        ),
+      ),
+      (r) => ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Post Deleted succesfully",
+          ),
+        ),
+      ),
+    );
+  }
+
+  void upvote(Post post) async {
+    final user = _ref.read(userProvider)!;
+    _postRepository.upvote(post, user.uuid);
+  }
+
+  void downvote(Post post) async {
+    final user = _ref.read(userProvider)!;
+    _postRepository.downvote(post, user.uuid);
+  }
+
+  Stream<Post> getPostById(String postId) {
+    return _postRepository.getPost(postId);
+  }
+
+  void addComents(
+      {required String text,
+      required Post post,
+      required BuildContext context}) async {
+    final commentId = const Uuid().v1();
+    final user = _ref.read(userProvider)!;
+    Comment comment = Comment(
+        id: commentId,
+        text: text,
+        username: user.name,
+        createdAt: DateTime.now(),
+        postId: post.id,
+        profilePic: user.profilePic);
+
+    final res = await _postRepository.addComents(comment);
+    _ref
+        .read(userControllerProvider.notifier)
+        .updateUserKarma(UserKarma.comment);
+
+    res.fold(
+        (l) => ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  l.toString(),
+                ),
+              ),
+            ),
+        (r) => null);
+  }
+
+  Stream<List<Comment>> fetchComments(String postId) {
+    return _postRepository.fetchComments(postId);
   }
 }
